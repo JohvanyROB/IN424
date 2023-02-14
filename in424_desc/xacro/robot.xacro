@@ -1,0 +1,131 @@
+<?xml version="1.0"?>
+<robot name="my_diff_wheeled_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:property name="wheel_radius" value="0.15"/>
+    <xacro:property name="wheel_length" value="0.05"/>
+    <xacro:property name="base_width" value="0.5"/>
+    <xacro:property name="base_depth" value="0.7"/>
+    <xacro:property name="base_height" value="0.2"/>
+    <xacro:property name="front_wheel_radius" value="${wheel_radius/2}"/>
+
+    <xacro:include filename="$(find in424_desc)/xacro/materials.xacro"/>
+    <xacro:include filename="$(find in424_desc)/xacro/robot.gazebo"/>
+
+    <xacro:macro name="box_inertial" params="mass width height depth">
+        <inertial>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass / 12 * (height*height + depth*depth)}"
+            iyy="${mass / 12 * (width*width + depth*depth)}"
+            izz="${mass / 12 * (width*width + height*height)}"
+            ixy="0" iyz="0" ixz="0"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="cylinder_inertial" params="mass radius length roll pitch yaw">
+        <inertial>
+        <origin rpy="${roll} ${pitch} ${yaw}"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass*(3*radius*radius+length*length)/12}"
+            iyy="${mass*(3*radius*radius+length*length)/12}"
+            izz="${mass*radius*radius/2}"
+            ixy="0" iyz="0" ixz="0"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertial" params="mass radius">
+        <inertial>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass*(2*radius*radius)/5}"
+            iyy="${mass*(2*radius*radius)/5}"
+            izz="${mass*(2*radius*radius)/5}"
+            ixy="0" iyz="0" ixz="0"/>
+        </inertial>
+    </xacro:macro>
+
+
+    <!-- *****************BASE LINK************************* -->
+    <link name="base_footprint"/>
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <box size="${base_depth} ${base_width} ${base_height}"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${base_depth} ${base_width} ${base_height}"/>
+            </geometry>
+        </collision>
+        <xacro:box_inertial mass="0.5" width="${base_depth}" height="${base_width}" depth="${base_height}"/>
+    </link>
+    <joint name="base_footprint_to_base_link" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0 0 ${wheel_radius}"/>
+    </joint>
+
+
+    <!-- *****************REAR WHEELS************************* -->
+    <xacro:macro name="wheel" params="prefix reflect">
+        <link name="${prefix}_wheel">
+            <visual>
+                <origin rpy="${pi/2} 0 0"/>
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin rpy="${pi/2} 0 0"/>
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+            </collision>
+            <xacro:cylinder_inertial mass="0.05" radius="${wheel_radius}" length="${wheel_length}" roll="${pi/2}" pitch="0" yaw="0"/>
+        </link>
+        <joint name="base_to_${prefix}_wheel" type="fixed">
+            <parent link="base_link"/>
+            <child link="${prefix}_wheel"/>
+            <origin xyz="${-1*base_depth/2 + wheel_radius} ${reflect*(base_width/2+wheel_length/2)} 0"/>
+        </joint>
+    </xacro:macro>
+    <xacro:wheel prefix="left" reflect="1" />
+    <xacro:wheel prefix="right" reflect="-1" />
+
+    <!-- *****************FRONT WHEEL************************* -->
+    <link name="front_wheel">
+        <visual>
+        <geometry>
+            <sphere radius="${front_wheel_radius}"/>
+        </geometry>
+        <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="${front_wheel_radius}"/>
+            </geometry>
+        </collision>
+        <xacro:sphere_inertial mass="0.1" radius="${front_wheel_radius}"/>
+    </link>
+    <joint name="base_link_to_front_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="front_wheel"/>
+        <origin xyz="${base_depth/2-2*front_wheel_radius} 0 ${-front_wheel_radius}"/>
+    </joint>
+
+
+    <!-- *****************ULTRASOUND************************* -->
+    <link name="ultrasound">
+        <visual>
+            <geometry>
+                <box size="0.03 0.06 0.03"/>
+            </geometry>
+        </visual>
+    </link>
+    <joint name="base_to_us" type="fixed">
+        <parent link="base_link"/>
+        <child link="ultrasound"/>
+        <origin xyz="${base_depth/2-0.05} 0 ${base_height/2 + 0.015}"/>
+    </joint>
+</robot>

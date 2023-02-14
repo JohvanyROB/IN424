@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<launch>
+  <arg name="python_script" default="my_agent"/>
+  <arg name="name" default="robot_1"/>
+
+  <node pkg="in424_nav" type="$(arg python_script).py" name="$(arg name)" output="screen">
+    <param name="robot_name" value="$(arg name)"/>
+  </node>
+</launch>

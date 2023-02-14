@@ -1,0 +1,4 @@
+geometry_msgs/Vector3 coords
+---
+float64 distance
+int64 id_flag

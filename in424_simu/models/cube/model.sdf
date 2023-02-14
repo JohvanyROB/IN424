@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sdf version="1.4">
+  <model name="cube">
+    <static>true</static>
+    <link name="cube">
+      <visual name="visual_cube">
+        <pose>0 0 0.5 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+            <name>Gazebo/CoM</name>
+          </script>
+        </material>
+      </visual>
+      <collision name="collision_cube">
+        <pose>0 0 0.5 0 0 0</pose>
+        <geometry>
+          <box>
+            <size>1 1 1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>

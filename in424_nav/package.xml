@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>in424_nav</name>
+  <version>1.0.0</version>
+  <description>This package contains the required files to make the simulated robots determine the position of each flag in the environment</description>
+  <maintainer email="johvany.gustave@ipsa.fr">Johvany Gustave</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>rospy</depend>
+
+  <export>
+  </export>
+</package>
