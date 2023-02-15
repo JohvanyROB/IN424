@@ -16,7 +16,7 @@ cd ~/catkin_ws/src && git clone https://github.com/JohvanyROB/IN424.git
 
 cd ~/catkin_ws && catkin_make --pkg in424_msgs && source ~/catkin_ws/devel/setup.bash
 
-catkin_make --pkg in424_msgs && source ~/catkin_ws/devel/setup.bash
+catkin_make && source ~/catkin_ws/devel/setup.bash
 ```
 
 You can now come back to the project subject. 
