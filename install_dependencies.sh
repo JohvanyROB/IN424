@@ -13,4 +13,4 @@ pip3 install transforms3d
 echo "source /usr/share/gazebo/setup.sh" >> ~/.bashrc
 source /opt/ros/galactic/setup.bash
 cd ~/ros2_ws && colcon build --symlink-install
-echo "source ~/tello_ros_ws/install/setup.bash" >> ~/.bashrc
+echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
