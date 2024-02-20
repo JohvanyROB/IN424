@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find in424_desc)/xacro/macro.xacro"/>
+
+	<!-- base_link -->
+	<gazebo reference="base_link">
+		<material>Gazebo/$(arg base_color_arg)</material>
+		<mu1>1.0</mu1>
+		<mu2>1.0</mu2>
+	</gazebo>
+	<gazebo reference="base_front">
+		<material>Gazebo/Red</material>
+	</gazebo>
+
+	<!-- Left Wheel -->
+	<gazebo reference="left_wheel">
+		<material>Gazebo/Black</material>
+		<mu1>0.0</mu1>
+    	<mu2>0.0</mu2>
+	</gazebo>
+
+	<!-- Right Wheel -->
+	<gazebo reference="right_wheel">
+		<material>Gazebo/Black</material>
+		<mu1>0.0</mu1>
+    	<mu2>0.0</mu2>
+	</gazebo>
+
+	<!-- Front Wheel -->
+	<gazebo reference="front_wheel">
+		<material>Gazebo/Black</material>
+		<mu1>0.0</mu1>
+    	<mu2>0.0</mu2>
+	</gazebo>
+
+
+	<!-- DO NOT TOUCH THIS PART -->
+	<gazebo>
+        <plugin name='object_controller' filename='libgazebo_ros_planar_move.so'>
+            <odometry_frame>odom</odometry_frame>
+			<update_rate>20</update_rate>	<!-- Set control loop update rate -->
+            <publish_rate>10.0</publish_rate>	<!-- Set odom publish rate -->
+            <robot_base_frame>base_footprint</robot_base_frame>
+			<publish_odom_tf>false</publish_odom_tf>
+        </plugin>
+    </gazebo>
+	
+	<xacro:us_gazebo link_name="us_front"/>
+	<xacro:us_gazebo link_name="us_left"/>
+	<xacro:us_gazebo link_name="us_right"/>
+</robot>

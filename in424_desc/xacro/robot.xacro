@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:arg name="base_color_arg" default="Green"/>
+
+    <xacro:include filename="$(find in424_desc)/xacro/materials.xacro"/>
+    <xacro:include filename="$(find in424_desc)/xacro/robot.gazebo"/>
+    <xacro:include filename="$(find in424_desc)/xacro/macro.xacro"/>
+
+    <xacro:property name="base_radius" value="0.25"/>
+    <xacro:property name="base_length" value="0.15"/>
+    <xacro:property name="wheel_radius" value="0.05"/>
+    <xacro:property name="wheel_length" value="0.03"/>
+    <xacro:property name="front_wheel_radius" value="${wheel_radius/2+0.01}"/>
+
+
+    <!-- *****************BASE LINK************************* -->
+    <link name="base_footprint"/>
+
+    <link name="base_link">
+        <visual>
+            <origin xyz="0 0 ${base_length/2}"/>
+            <geometry>
+                <cylinder radius="${base_radius}" length="${base_length}"/>
+            </geometry>
+            <material name="green"/>
+        </visual>
+        <collision>
+            <origin xyz="0 0 ${base_length/2}"/>
+            <geometry>
+                <cylinder radius="${base_radius}" length="${base_length}"/>
+            </geometry>
+        </collision>
+        <xacro:cylinder_inertial mass="0.5" radius="${base_radius}" length="${base_length}" oz="${base_length/2}" roll="0" pitch="0" yaw="0"/>
+    </link>
+    <joint name="base_footprint_to_base_link" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+    </joint>
+
+    <link name="base_front">
+        <visual>
+            <geometry>
+                <cylinder radius="0.025" length="0.025"/>
+            </geometry>
+        </visual>
+    </link>
+    <joint name="base_to_bf" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_front"/>
+        <origin xyz="${base_radius-2*0.025} 0 ${base_length}"/>
+    </joint>
+
+
+    <!-- *****************REAR WHEELS************************* -->
+    <xacro:wheel prefix="left" reflect="1" />
+    <xacro:wheel prefix="right" reflect="-1" />
+
+
+    <!-- *****************FRONT WHEEL************************* -->
+    <link name="front_wheel">
+        <visual>
+        <geometry>
+            <sphere radius="${front_wheel_radius}"/>
+        </geometry>
+        <material name="black"/>
+        </visual>
+        <collision>
+            <geometry>
+                <sphere radius="${front_wheel_radius}"/>
+            </geometry>
+        </collision>
+        <xacro:sphere_inertial mass="0.1" radius="${front_wheel_radius}"/>
+    </link>
+    <joint name="base_link_to_front_wheel" type="fixed">
+        <parent link="base_link"/>
+        <child link="front_wheel"/>
+        <origin xyz="${base_radius-2*front_wheel_radius} 0 ${-front_wheel_radius/2}"/>
+    </joint>
+
+
+    <!-- *****************ULTRASONIC SENSORS************************* -->
+    <xacro:us_link_joint link_name="us_front" x="${base_radius - 0.001}" y="0" yaw="0"/>
+    <xacro:us_link_joint link_name="us_left" x="0" y="${base_radius - 0.001}" yaw="${pi/2}"/>
+    <xacro:us_link_joint link_name="us_right" x="0" y="-${base_radius - 0.001}" yaw="-${pi/2}"/>
+</robot>

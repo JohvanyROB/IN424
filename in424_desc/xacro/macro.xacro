@@ -1,0 +1,105 @@
+<?xml version="1.0"?>
+<robot name="macro" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:macro name="cylinder_inertial" params="mass radius length oz roll pitch yaw">
+        <inertial>
+        <origin xyz="0 0 ${oz}" rpy="${roll} ${pitch} ${yaw}"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass*(3*radius*radius+length*length)/12}"
+            iyy="${mass*(3*radius*radius+length*length)/12}"
+            izz="${mass*radius*radius/2}"
+            ixy="0" iyz="0" ixz="0"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="sphere_inertial" params="mass radius">
+        <inertial>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass*(2*radius*radius)/5}"
+            iyy="${mass*(2*radius*radius)/5}"
+            izz="${mass*(2*radius*radius)/5}"
+            ixy="0" iyz="0" ixz="0"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="wheel" params="prefix reflect">
+        <link name="${prefix}_wheel">
+            <visual>
+                <origin rpy="${pi/2} 0 0"/>
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <origin rpy="${pi/2} 0 0"/>
+                <geometry>
+                <cylinder radius="${wheel_radius}" length="${wheel_length}"/>
+                </geometry>
+            </collision>
+            <xacro:cylinder_inertial mass="0.05" radius="${wheel_radius}" length="${wheel_length}" oz="0" roll="${pi/2}" pitch="0" yaw="0"/>
+        </link>
+        <joint name="base_to_${prefix}_wheel" type="fixed">
+            <parent link="base_link"/>
+            <child link="${prefix}_wheel"/>
+            <origin xyz="${-base_radius/2} ${reflect*(2*base_radius/3)} 0"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="us_link_joint" params="link_name x y yaw">
+        <link name="${link_name}">
+            <visual>
+                <origin xyz="0 0.0225 0.01" rpy="${-pi/2} 0 ${-pi/2}"/>
+                <!-- <origin rpy="${-pi/2} 0 ${pi/2}"/> -->
+                <geometry>
+                    <mesh filename="$(find in424_desc)/xacro/mesh/us_sensor.stl" scale="0.001 0.001 0.001"/>
+                    <!-- <cylinder radius="0.02" length="0.02"/> -->
+                </geometry>
+            </visual>
+        </link>
+        <joint name="base_to_${link_name}" type="fixed">
+            <parent link="base_link"/>
+            <child link="${link_name}"/>
+            <origin xyz="${x} ${y} ${base_length/2}" rpy="0 0 ${yaw}"/>
+        </joint>
+    </xacro:macro>
+
+    <xacro:macro name="us_gazebo" params="link_name">
+        <gazebo reference="${link_name}">
+            <material>Gazebo/Blue</material>
+            <sensor type="ray" name="${link_name}">
+                <pose>0 0 0 0 0 0</pose>
+                <visualize>true</visualize>
+                <update_rate>5</update_rate>
+                <ray>
+                    <scan>
+                        <horizontal>
+                            <samples>5</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-0.14835</min_angle>
+                            <max_angle>0.14835</max_angle>
+                        </horizontal>
+                        <vertical>
+                            <samples>5</samples>
+                            <resolution>1</resolution>
+                            <min_angle>-0.01</min_angle>
+                            <max_angle>0.14835</max_angle>
+                        </vertical>
+                    </scan>
+                    <range>
+                        <min>0.05</min>
+                        <max>3</max>
+                        <resolution>0.02</resolution>
+                    </range>
+                </ray>
+                <plugin name="${link_name}" filename="libgazebo_ros_ray_sensor.so">
+                    <ros>
+                        <remapping>~/out:=~/range</remapping>
+                    </ros>
+                    <output_type>sensor_msgs/Range</output_type>
+                    <radiation_type>ultrasound</radiation_type>
+                    <frame_name>${link_name}</frame_name>
+                </plugin>
+            </sensor>
+        </gazebo>
+    </xacro:macro>
+</robot>
