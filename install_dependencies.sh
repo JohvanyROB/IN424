@@ -5,7 +5,7 @@ sudo apt update -y
 # Install project's dependencies 
 sudo apt -y install python3-colcon-common-extensions
 sudo apt -y install python3-pip
-sudo apt -y install ros-galactic-gazebo-ros-pkgs ros-galactic-tf-transformations ros-galactic-tf2-tools ros-galactic-teleop-twist-keyboard
+sudo apt -y install ros-galactic-gazebo-ros-pkgs ros-galactic-tf-transformations ros-galactic-tf2-tools ros-galactic-teleop-twist-keyboard ros-galactic-xacro
 
 pip3 install transforms3d
 
