@@ -11,7 +11,7 @@ from launch_ros.actions import Node
 def generate_launch_description():
     simu_pkg = get_package_share_directory("in424_simu")
 
-    os.environ["GAZEBO_MODEL_PATH"] = os.path.join(simu_pkg, "models")
+    os.environ["GAZEBO_MODEL_PATH"] += os.path.join(simu_pkg, "models")
 
     spawn_robots_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
